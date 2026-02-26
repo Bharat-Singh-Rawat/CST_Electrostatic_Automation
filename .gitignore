@@ -1,0 +1,8 @@
+# Ignore everything by default
+/*
+
+# Except for this specific file
+!Efield_datasetgeneration.py
+
+# And except for the .gitignore file itself
+!.gitignore
