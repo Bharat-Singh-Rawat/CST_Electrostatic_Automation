@@ -7,12 +7,10 @@ from scipy.stats import qmc
 # --- Configuration ---
 PROJECT_PATH = r"D:\CST Python\EfieldRuns\Efield_5T_1T.cst"
 BASE_RESULT_FOLDER = r"D:\CST Python\EfieldRuns\Results"
-
 NUM_SAMPLES = 10
 VOLTAGE_MIN = -500.0
-VOLTAGE_MAX = 500.0
+VOLTAGE_MAX = 500.0 
 
-# Directly encoded default electrode voltages (used only to get the list of names now)
 ELECTRODE_DEFAULTS = {
     "C0": 0.0, "HV1": 0.0, "C1": 0.0, "C2": 0.0, "C3": 0.0, "C4": 0.0, "C5": 0.0, 
     "C6": 0.0, "C7": 0.0, "C8": 0.0, "C9": 0.0, "C10": 0.0, "C11": 0.0, "C12": 0.0, 
@@ -47,13 +45,13 @@ def main():
     
     try:
         prj = de.open_project(PROJECT_PATH)
-
+        
         for target_electrode in ELECTRODE_DEFAULTS.keys():
-            electrode_folder = os.path.join(BASE_RESULT_FOLDER, str(target_electrode))
+            electrode_folder = os.path.join(BASE_RESULT_FOLDER, target_electrode)
             if not os.path.exists(electrode_folder):
                 os.makedirs(electrode_folder)
 
-            # Generate LHS Samples (-500V to +500V) 
+            # Generate LHS Samples 
             sampler = qmc.LatinHypercube(d=1, seed=42) 
             sample = sampler.random(n=NUM_SAMPLES)
             current_values = qmc.scale(sample, [VOLTAGE_MIN], [VOLTAGE_MAX]).flatten()
@@ -70,12 +68,11 @@ def main():
                     print(f"  [Skipping] {file_name} already exists.")
                     continue
 
-                print(f"  [Running] {target_electrode} = {val} V ({i+1}/{NUM_SAMPLES})")
+                print(f"  [Running] {target_electrode} = {val} ({i+1}/{NUM_SAMPLES})")
 
                 # VBA: Update Parameters
                 vba_set_params = "Sub Main\n"
                 for electrode_name in ELECTRODE_DEFAULTS.keys():
-                    # Set target to test voltage; set all other electrodes to 0.0
                     set_val = val if electrode_name == target_electrode else 0.0
                     vba_set_params += f'  StoreParameter("{electrode_name}", {set_val})\n'
                 vba_set_params += "  Rebuild\nEnd Sub"
@@ -87,12 +84,11 @@ def main():
                 except Exception as e:
                     print(f"    Solver error: {e}")
 
-                # Export Electric Potential
+                # Export
                 full_path_vba = full_path_os.replace("\\", "\\\\")
                 export_vba = f"""
                 Sub Main
-                    ' Target the 3D Potential map instead of E-Field
-                    SelectTreeItem("2D/3D Results\\Potential\\potential")
+                    SelectTreeItem("2D/3D Results\\Potential [Es]")
                     With ASCIIExport
                         .Reset
                         .FileName ("{full_path_vba}")
