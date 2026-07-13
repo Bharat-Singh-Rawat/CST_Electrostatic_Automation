@@ -1,10 +1,10 @@
 # CST Electrostatic Automation — AEgIS Electrode ROM
 
-**Python and MATLAB scripts for building a Reduced Order Surrogate model of the electrostatic potential of the AEgIS electrode system.**
+**Python and MATLAB scripts for building a Reduced Order Surrogate model of the electrostatic potential of the AEgIS Penning Trap electrode system.**
 
 This repository automates [CST Studio Suite](https://www.3ds.com/products/simulia/cst-studio-suite) to generate the training data for an electrostatic Reduced Order Model (ROM) of the AEgIS Penning–Malmberg trap. Each electrode is energized individually and its potential map is exported, producing a **unit-potential basis**. By linearity of the electrostatic problem, an arbitrary electrode configuration can then be reconstructed in milliseconds as a weighted superposition of these basis maps — the core idea behind the surrogate model.
 
-It is the electrostatics counterpart to the magnetostatic automation pipeline, and corresponds to the electrostatics ROM described in the associated AEgIS Reduced Order Modelling manuscript.
+It is the electrostatics counterpart to the magnetostatic automation pipeline.
 
 ---
 
